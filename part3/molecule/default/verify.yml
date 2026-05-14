@@ -1,0 +1,31 @@
+---
+- name: Verify
+  hosts: all
+  become: yes
+  tasks:
+    - name: Проверка, что демон docker запущен
+      ansible.builtin.systemd:
+        name: docker
+      register: docker_service_status
+
+    - name: Ассерт docker активен
+      ansible.builtin.assert:
+        that: docker_service_status.status.ActiveState == 'active'
+        fail_msg: "демон docker не запущен"
+
+    - name: Получение информации о контейнере
+      community.docker.docker_container_info:
+        name: http_checker_app
+      register: checker_container
+
+    - name: Ассерт контейнер существует
+      ansible.builtin.assert:
+        that:
+          - checker_container.exists
+        fail_msg: "Контейнер не существует"
+
+    - name: Ассерт контейнер завершился успешно
+      ansible.builtin.assert:
+        that:
+          - checker_container.container.State.ExitCode == 0
+        fail_msg: "Контейнер завершился с ошибкой"

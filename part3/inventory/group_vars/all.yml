@@ -1,0 +1,7 @@
+---
+ansible_user: "vagrant"
+docker_admin_user: "{{ ansible_user }}"
+is_enabled_docker_autostart: true
+app_directory: "/opt/my_test_app"
+http_checker_app_image_name: "local/http_checker:latest"
+http_checker_app_container_name: "http_checker"

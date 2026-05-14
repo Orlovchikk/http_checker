@@ -1,0 +1,14 @@
+docker_required_packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - software-properties-common
+  - python3-docker
+
+docker_admin_user: "{{ ansible_user_id }}"
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin

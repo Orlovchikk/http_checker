@@ -1,0 +1,7 @@
+---
+- name: Развертывание Docker и запуск тестового скрипта
+  hosts: all
+  become: true
+  roles:
+    - role: docker_setup
+    - role: script_runner

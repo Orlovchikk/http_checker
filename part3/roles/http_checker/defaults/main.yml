@@ -1,0 +1,7 @@
+---
+http_checker_registry_url: "docker.io"
+http_checker_image_repository: "orlovchik/http_checker"
+http_checker_image_tag: "1"
+http_checker_container_name: "http_checker_app"
+checker_wait_retries: 15
+checker_wait_delay: 2

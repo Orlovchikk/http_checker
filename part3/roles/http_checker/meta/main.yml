@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: "orlovchik"
+  description: "Роль для развертывания и проверки работы контейнера http_checker"
+  license: "MIT"
+  min_ansible_version: "2.12"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
+
+collections:
+  - community.docker
+
+dependencies: []

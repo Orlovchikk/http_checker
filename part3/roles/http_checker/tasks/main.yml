@@ -1,0 +1,42 @@
+---
+- name: Скачивание образа
+  community.docker.docker_image:
+    name: "{{ http_checker_registry_url }}/{{ http_checker_image_repository }}:{{ http_checker_image_tag }}"
+    source: pull
+    state: present
+
+- name: Запуск контейнера
+  community.docker.docker_container:
+    name: "{{ http_checker_container_name }}"
+    image: "{{ http_checker_registry_url }}/{{ http_checker_image_repository }}:{{ http_checker_image_tag }}"
+    state: started
+    detach: true
+    recreate: yes
+
+- name: Ожидание завершения работы контейнера
+  community.docker.docker_container_info:
+    name: "{{ http_checker_container_name }}"
+  register: container_info
+  until: container_info.container.State.Status == 'exited'
+  retries: "{{ checker_wait_retries }}"
+  delay: "{{ checker_wait_delay }}"
+
+- name: Получение логов контейнера
+  ansible.builtin.command: "docker logs {{ http_checker_container_name }}"
+  register: docker_logs
+  changed_when: false
+
+- name: Вывод логов в консоль Ansible
+  ansible.builtin.debug:
+    msg:
+      - "STDOUT"
+      - "{{ docker_logs.stdout_lines | default('Пусто') }}"
+      - "STDERR"
+      - "{{ docker_logs.stderr_lines | default('Пусто') }}"
+
+- name: Проверка успешного выполнения контейнера
+  ansible.builtin.assert:
+    that:
+      - container_info.container.State.ExitCode == 0
+    fail_msg: "ERROR: Контейнер завершился с кодом {{ container_info.container.State.ExitCode }}"
+    success_msg: "INFO: Контейнер успешно завершился"
